@@ -10,16 +10,17 @@ const getAllAuthors = async (request, response) => {
 }
 const getAuthorById = async (request, response) => {
   const { id } = request.params
-  const result = await models.authors.findOne({
+
+  const foundAuthor = await models.authors.findOne({
     where: { id },
     include: [{
-      model: models.Novels,
+      model: models.novels,
       include: [{ model: models.genres }]
     }]
   })
 
-  return result
-    ? response.send(result)
+  return foundAuthor
+    ? response.send(foundAuthor)
     : response.sendStatus(404)
 }
 
@@ -32,16 +33,17 @@ const getAllGenres = async (request, response) => {
 }
 const getGenreById = async (request, response) => {
   const { id } = request.params
-  const genre = await models.genres.findOne({
+
+  const foundGenre = await models.genres.findOne({
     where: { id },
     include: [{
       model: models.novels,
-      include: [{ model: models.Authors }]
+      include: [{ model: models.authors }]
     }]
   })
 
-  return genre
-    ? response.send(genre)
+  return foundGenre
+    ? response.send(foundGenre)
     : response.sendStatus(404)
 }
 const getAllNovels = async (request, response) => {
