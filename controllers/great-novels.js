@@ -24,6 +24,26 @@ const getAuthorById = async (request, response) => {
     : response.sendStatus(404)
 }
 
+const getAuthorsByIdOrLastName = async (request, response) => {
+  const { identifier } = request.params
+
+  const foundAuthor = await models.Authors.findOne({
+    where: {
+      [models.Op.or]: [
+        { id: identifier },
+        { nameLast: { [models.Op.like]: `%${identifier}%` } },
+      ]
+    },
+    include: [{
+      model: models.Novels,
+      include: [{ model: models.Genres }]
+    }]
+  })
+
+  return foundAuthor
+    ? response.send(foundAuthor)
+    : response.sendStatus(404)
+}
 const getAllGenres = async (request, response) => {
   const genres = await models.genres.findAll()
 
@@ -83,5 +103,5 @@ const getNovelById = async (request, response) => {
 
 
 module.exports = {
-  getAllAuthors, getAuthorById, getAllGenres, getGenreById, getAllNovels, getNovelById
+  getAllAuthors, getAuthorById, getAllGenres, getGenreById, getAllNovels, getNovelById, getAuthorsByIdOrLastName
 }

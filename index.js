@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 const express = require('express')
 const {
-  getAllAuthors, getAuthorById, getAllGenres, getGenreById, getAllNovels, getNovelById
+  getAllAuthors, getAuthorById, getAllGenres, getGenreById, getAllNovels, getNovelById, getAuthorsByIdOrLastName
 } = require('./controllers/great-novels')
 
 const app = express()
@@ -10,6 +10,7 @@ const app = express()
 
 app.get('/authors', getAllAuthors)
 app.get('/authors/:id', getAuthorById)
+app.get('/authors/:identifier', getAuthorsByIdOrLastName)
 
 app.get('/genres', getAllGenres)
 app.get('/genres/:id', getGenreById)
