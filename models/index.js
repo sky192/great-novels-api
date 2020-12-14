@@ -15,20 +15,20 @@ const connection = new Sequelize(config.database, config.username, config.passwo
 })
 
 
-const authors = authorsModel(connection, Sequelize)
-const genres = genresModel(connection, Sequelize)
-const novels = novelsModel(connection, Sequelize, authors)
-const novelsGenres = novelsGenresModel(connection, Sequelize, genres, novels)
+const Authors = authorsModel(connection, Sequelize)
+const Genres = genresModel(connection, Sequelize)
+const Novels = novelsModel(connection, Sequelize, Authors)
+const NovelsGenres = novelsGenresModel(connection, Sequelize, Genres, Novels)
 
-novels.belongsTo(authors)
-authors.hasMany(novels)
+Novels.belongsTo(Authors)
+Authors.hasMany(Novels)
 
-genres.belongsToMany(novels, { through: novelsGenres })
-novels.belongsToMany(genres, { through: novelsGenres })
+Genres.belongsToMany(Novels, { through: NovelsGenres })
+Novels.belongsToMany(Genres, { through: NovelsGenres })
 
 module.exports = {
-  authors,
-  genres,
-  novels,
-  novelsGenres,
+  Authors,
+  Genres,
+  Novels,
+  NovelsGenres,
 }

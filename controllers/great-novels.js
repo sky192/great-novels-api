@@ -1,44 +1,30 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-const { request } = require('express')
 const models = require('../models')
+const Op = require('Sequelize').Op
 
 const getAllAuthors = async (request, response) => {
-  const authors = await models.authors.findAll()
+  const authors = await models.Authors.findAll()
 
   return authors
     ? response.send(authors)
     : response.sendStatus(404)
 }
-const getAuthorById = async (request, response) => {
-  const { id } = request.params
 
-  const foundAuthor = await models.authors.findOne({
-    where: { id },
-    include: [{
-      model: models.novels,
-      include: [{ model: models.genres }]
-    }]
-  })
-
-  return foundAuthor
-    ? response.send(foundAuthor)
-    : response.sendStatus(404)
-}
 
 const getAuthorsByIdOrLastName = async (request, response) => {
   const { identifier } = request.params
 
-  const foundAuthor = await models.authors.findOne({
+  const foundAuthor = await models.Authors.findOne({
     where: {
-      [models.Op.or]: [
+      [Op.or]: [
         { id: identifier },
-        { nameLast: { [models.Op.like]: `%${identifier}%` } },
+        { nameLast: { [Op.like]: `%${identifier}%` } },
       ]
     },
     include: [{
-      model: models.novels,
-      include: [{ model: models.genres }]
+      model: models.Novels,
+      include: [{ model: models.Genres }]
     }]
   })
 
@@ -47,7 +33,7 @@ const getAuthorsByIdOrLastName = async (request, response) => {
     : response.sendStatus(404)
 }
 const getAllGenres = async (request, response) => {
-  const genres = await models.genres.findAll()
+  const genres = await models.Genres.findAll()
 
   return genres
     ? response.send(genres)
@@ -56,11 +42,11 @@ const getAllGenres = async (request, response) => {
 const getGenreById = async (request, response) => {
   const { id } = request.params
 
-  const foundGenre = await models.genres.findOne({
+  const foundGenre = await models.Genres.findOne({
     where: { id },
     include: [{
-      model: models.novels,
-      include: [{ model: models.authors }]
+      model: models.Novels,
+      include: [{ model: models.Authors }]
     }]
   })
 
@@ -69,10 +55,10 @@ const getGenreById = async (request, response) => {
     : response.sendStatus(404)
 }
 const getAllNovels = async (request, response) => {
-  const novels = await models.novels.findAll({
+  const novels = await models.Novels.findAll({
     include: [
-      { model: models.authors },
-      { model: models.genres },
+      { model: models.Authors },
+      { model: models.Genres },
     ]
   })
 
@@ -80,33 +66,19 @@ const getAllNovels = async (request, response) => {
     ? response.send(novels)
     : response.sendStatus(404)
 }
-const getNovelById = async (request, response) => {
-  const { id } = request.params
-  const novel = await models.novels.findOne({
-    where: { id },
-    include: [
-      { model: models.authors },
-      { model: models.genres },
-    ]
-  })
-
-  return novel
-    ? response.send(novel)
-    : response.sendStatus(404)
-}
 
 
 const getNovelsByIdOrTitle = async (request, response) => {
   const { identifier } = request.params
 
-  const foundNovel = await models.novels.findOne({
+  const foundNovel = await models.Novels.findOne({
     where: {
-      [models.Op.or]: [
+      [Op.or]: [
         { id: identifier },
-        { title: { [models.Op.like]: `%${identifier}%` } },
+        { title: { [Op.like]: `%${identifier}%` } },
       ]
     },
-    include: [{ model: models.authors }, { model: models.genres }]
+    include: [{ model: models.Authors }, { model: models.Genres }]
   })
 
   return foundNovel
@@ -119,5 +91,5 @@ const getNovelsByIdOrTitle = async (request, response) => {
 
 
 module.exports = {
-  getAllAuthors, getAuthorById, getAllGenres, getGenreById, getAllNovels, getNovelById, getAuthorsByIdOrLastName, getNovelsByIdOrTitle
+  getAllAuthors, getAllGenres, getGenreById, getAllNovels, getAuthorsByIdOrLastName, getNovelsByIdOrTitle
 }

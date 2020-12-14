@@ -3,6 +3,10 @@ const authors = (connection, Sequelize) => {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
     nameFirst: { type: Sequelize.STRING, allowNull: false },
     nameLast: { type: Sequelize.STRING, allowNull: false }
+  }, {
+    defaultScope: {
+      attributes: { exclude: ['deletedAt'] }
+    }
   }, { paranoid: true })
 }
 
